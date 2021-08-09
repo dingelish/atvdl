@@ -32,7 +32,7 @@ func TaskBoard(runner func(task interface{}) interface{}, tasks []interface{}, w
 	// 分配线程
 	taskCfg.Workers = make(chan interface{}, workers)
 	// 任务结果缓存
-	taskCfg.Results = make(chan interface{}, 1024)
+	taskCfg.Results = make(chan interface{}, 16384)
 	// 添加任务
 	taskCfg.Control.Add(taskCfg.Counts)
 	// 任务分配
