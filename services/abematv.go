@@ -96,8 +96,12 @@ func (atv *AbemaTVBasic) setM3U8Host() {
 }
 
 // setVideoHost 设置 Video 的地址
-func (atv *AbemaTVBasic) setVideoHost() {
-	atv.videoHost = strings.Split(atv.PlaylistURL, "program")[0]
+func (atv *AbemaTVBasic) setVideoHost(videohost string) {
+	if videohost == "" {
+		atv.videoHost = strings.Split(atv.PlaylistURL, "program")[0]
+	} else {
+		atv.videoHost = videohost
+	}
 }
 
 // hexStr 转换 key 和 iv 为16进制
@@ -199,14 +203,14 @@ func (atv *AbemaTVBasic) BestM3U8URL() (m3u8URL string) {
 }
 
 // GetVideoInfo 获取视频信息
-func (atv *AbemaTVBasic) GetVideoInfo(m3u8URL string) []interface{} {
+func (atv *AbemaTVBasic) GetVideoInfo(m3u8URL string, videohost string) []interface{} {
 	atv.videos = []interface{}{}
 	// 视频列表的
 	atv.setM3U8Host()
 	m3u8URL = atv.m3u8Host + m3u8URL
 
 	// 视频下载地址的 HOST
-	atv.setVideoHost()
+	atv.setVideoHost(videohost)
 	videoHost := atv.videoHost
 	// 移除末尾的"/"
 	videoHost = videoHost[0 : len(videoHost)-1]
@@ -253,7 +257,7 @@ func (atv *AbemaTVBasic) DownloadCore(videos []interface{}, thread int) {
 }
 
 // AtvDL 调用主函数
-func AtvDL(playlistURL, key, proxy string) {
+func AtvDL(playlistURL, key, proxy string, videohost string) {
 	if AbemaTV.IPCheck(playlistURL) {
 		AbemaTV.PlaylistURL = playlistURL
 		AbemaTV.Key = key
@@ -264,7 +268,7 @@ func AtvDL(playlistURL, key, proxy string) {
 		fmt.Printf("  - [URL] %s\n", bestURL)
 
 		fmt.Println("[2] Get Video List...")
-		videos := AbemaTV.GetVideoInfo(bestURL)
+		videos := AbemaTV.GetVideoInfo(bestURL, videohost)
 		fmt.Printf("  [Video] %d\n", len(videos))
 
 		fmt.Println("[3] Downloading...")

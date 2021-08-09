@@ -45,12 +45,14 @@ func main() {
 	uiPlaylist := widget.NewEntry()
 	uiKey := widget.NewEntry()
 	uiProxy := widget.NewEntry()
+	uiVideohost := widget.NewEntry()
 	uiHelp := widget.NewLabel("")
 	services.UIProgress = widget.NewProgressBar()
 
 	uiPlaylist.SetPlaceHolder("Playlist")
 	uiKey.SetPlaceHolder("Key")
 	uiProxy.SetPlaceHolder("Socks5 Proxy")
+	uiVideohost.SetPlaceHolder("Video host override")
 
 	uiGetKey := widget.NewButton("Get Key", func() {
 		keyHelp(myWin)
@@ -61,6 +63,7 @@ func main() {
 		url := uiPlaylist.Text
 		key := uiKey.Text
 		proxy := uiProxy.Text
+		videohost_override := uiVideohost.Text
 
 		if url != "" && key != "" {
 			uiDownload.DisableableWidget.Disable()
@@ -82,7 +85,7 @@ func main() {
 					bestURL := abema.BestM3U8URL()
 					if bestURL != "" {
 						uiHelp.SetText("[2] Get Video List...")
-						videos := abema.GetVideoInfo(bestURL)
+						videos := abema.GetVideoInfo(bestURL, videohost_override)
 
 						dlInfo := fmt.Sprintf("[3] Downloading...(%d)", len(videos))
 						uiHelp.SetText(dlInfo)
@@ -122,6 +125,7 @@ func main() {
 		uiGetKey,
 		uiKey,
 		uiProxy,
+		uiVideohost,
 		services.UIProgress,
 		uiDownload,
 		uiHelp,
